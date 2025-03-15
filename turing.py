@@ -25,7 +25,7 @@ def run(machine_turing,T,current_task="q0",input_tape=["q0","1","1","1","+","1",
                 input_tape = list(check_q[0]+check_q[2])
                 current_task = i
                 input_tape.insert(len(check_q[0]),current_task)
-
+    print(machine_turing)
     print(input_tape)
     count_prog = 0
     while current_task != "q*":
@@ -41,11 +41,14 @@ def run(machine_turing,T,current_task="q0",input_tape=["q0","1","1","1","+","1",
         if current_task in machine_turing:
             if input_tape[view_q] in machine_turing[current_task]:
                 old_task = current_task
-                current_task = machine_turing[old_task][input_tape[view_q]][1:3]
+                temp_task = list(machine_turing[current_task][input_tape[view_q]])
+                temp_task.pop(0)
+                temp_task.pop(-1)
+                current_task = ''.join(temp_task)
                 old_view = input_tape[view_q]
                 input_tape[view_q] = machine_turing[old_task][input_tape[view_q]][0]
 
-                match machine_turing[old_task][old_view][3]:
+                match machine_turing[old_task][old_view][-1]:
                     case "R":
                         input_tape.insert(view_q+1,current_task)
                         input_tape.pop(index_q)
@@ -63,7 +66,7 @@ def run(machine_turing,T,current_task="q0",input_tape=["q0","1","1","1","+","1",
                             
                     case "N":
                         input_tape[index_q] = current_task
-                form_output = '%5s %10s' % ((" ".join(input_tape)), ("("+machine_turing[old_task][old_view]+")"))
+                form_output = '{:<20} {:>20}'.format((" ".join(input_tape)), ("("+machine_turing[old_task][old_view]+")"))
                 print((str(count_prog)+"."),form_output)
                 
             else:
