@@ -61,6 +61,15 @@ function run() {
       
       data[q_n] = { ...data[q_n], [q_t] : q_commands[i].value}
     }
+
+  }
+  if (Object.keys(data).length == 0) {
+    console.log("No data");
+    const div_output = document.getElementById('output');
+    const p = document.createElement('p');
+    p.innerHTML = "No data";
+    div_output.appendChild(p);
+    return
   }
   let response = fetch('/run', {
     method: 'POST',
