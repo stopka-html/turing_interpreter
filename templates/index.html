@@ -1,16 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Turing</title>
-    <script src="{{url_for('static', filename='script_index.js')}}"></script>
-    <link href="css/style.css" rel="stylesheet">
-  </head>
-  <body>
-  
-  <input type="text" name="input" id="input" class="input" value="">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Turing</title>
+  <script src="{{url_for('static', filename='script_index.js')}}"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_index.css') }}" />
+</head>
+
+<body>
+  <p>Input:</p>
+  <input type="text" name="input" id="size" class="input" value="">
+  <input type="text" name="" id="T" value="1&-+">
   <button onclick="generate_table()">Submit</button>
-  
-  </body>
+  <div id="table"></div>
+  <input type="file" id="file" value="">
+  <button onclick="from_file()">From file</button>
+  <input type="text" id="row_name" value="1">
+  <button onclick="add_row()">Add</button>
+  <input type="text" id="input_tape" value="111+11-11">
+
+  <button type="submit" onclick="run()">Run</button>
+
+  <div id="output"></div>
+
+</body>
+
 </html>
