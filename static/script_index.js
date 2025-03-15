@@ -1,6 +1,16 @@
 
 q_rows = 0
+is_created = false
+// generate table
 function generate_table(){
+  if (is_created) {
+    document.getElementById('table').remove();
+    is_created = false
+  }
+  else{
+    is_created = true
+
+  }
   var size = document.getElementById('size').value;
   var T_alphavit = document.getElementById('T').value;  
   tr = document.createElement('tr');
@@ -21,8 +31,23 @@ function generate_table(){
   //     tr.appendChild(td);
   //   }
 }
-  
+document.addEventListener('DOMContentLoaded', function() {
+  var data = JSON.parse(localStorage.getItem('data'));
+  if (data != null) {
+    read_from_var(data, data["size"], data["T_alphavit"]);
+  }
+});
+// save data
+setInterval(() => {
+  if(is_created == true){
+    var data = get_inputs();
 
+    data["size"] = document.getElementById('size').value;
+    data["T_alphavit"] = document.getElementById('T').value;
+    localStorage.setItem('data', JSON.stringify(data));
+  }
+}, 60000);  
+// add row
 function add_row(size=document.getElementById('row_name').value, T_alphavit=document.getElementById('T').value){
     
   for (var i = 0; i < size; i++) {
@@ -45,12 +70,10 @@ function add_row(size=document.getElementById('row_name').value, T_alphavit=docu
     document.getElementById('table').appendChild(tr);
   }
 }
-function run() {
-  var input = document.getElementById('input_tape').value;
-  var T_alphavit = document.getElementById('T').value;  
-  var size = document.getElementById('size').value;
+// get all inputs
+function get_inputs() {
   var q_commands = document.getElementsByClassName('q_commands__field');
-  let data = {
+  var data = {
     
   }
   for (var i = 0; i < q_commands.length; i++) {
@@ -61,8 +84,16 @@ function run() {
       
       data[q_n] = { ...data[q_n], [q_t] : q_commands[i].value}
     }
-
   }
+  return data
+}
+// post to flask and get program
+function run() {
+  var input = document.getElementById('input_tape').value;
+  var T_alphavit = document.getElementById('T').value;  
+  var size = document.getElementById('size').value;
+  
+  var data = get_inputs();
   if (Object.keys(data).length == 0) {
     console.log("No data");
     const div_output = document.getElementById('output');
@@ -103,6 +134,28 @@ function run() {
 }
 requestpost = document.getElementById('run');
 requestpost.addEventListener('submit', run);
+
+
+function read_from_var(data,size,T){
+  console.log(data);
+  delete data["size"];
+  delete data["T_alphavit"];
+  console.log(size);
+  console.log(T);
+  document.getElementById('size').value = size;
+  document.getElementById('T').value = T;
+  generate_table();
+  const input = document.getElementsByClassName('q_commands__field');
+  for (const key in data) {
+    for (const key2 in data[key]) {
+      input[key+"_"+key2].value = data[key][key2];
+    }
+  }
+}
+
+
+// read json from file
+//
 function from_file() {
   var file = document.getElementById('file').files[0];
   var reader = new FileReader();
@@ -120,20 +173,10 @@ function from_file() {
   }
   reader.readAsText(file);
 }
+//write json commands to file
 function write_and_download(){
   const input = document.getElementsByClassName('q_commands__field');
-  let data = {
-    
-  }
-  for (var i = 0; i < input.length; i++) {
-    let q_command = input[i].getAttribute('name');
-    if (input[i].value != "") {
-      const q_t = q_command.split("_")[1];
-      const q_n = q_command.split("_")[0];
-      
-      data[q_n] = { ...data[q_n], [q_t] : input[i].value}
-    }
-  }
+  var data = get_inputs(); 
   var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
   var downloadAnchorNode = document.createElement('a');
   downloadAnchorNode.setAttribute("href",     dataStr     );
