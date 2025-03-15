@@ -62,7 +62,7 @@ def run(machine_turing,T,current_task="q0",input_tape=["q0","1","1","1","+","1",
                             input_tape.insert(index_q-1, current_task)
                             
                     case "N":
-                        input_tape[index_q] = machine_turing[old_task][input_tape[view_q]][1:2].join('')
+                        input_tape[index_q] = current_task
 
                 print(" ".join(input_tape),index_q)
                 
