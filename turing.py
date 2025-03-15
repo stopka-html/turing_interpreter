@@ -32,9 +32,10 @@ def run(machine_turing,T,current_task="q0",input_tape=["q0","1","1","1","+","1",
         count_prog += 1
         index_q = input_tape.index(current_task)
         view_q = index_q+1
-        if count_prog > int(num_steps):
-            print("error3")
-            break
+        if num_steps:
+            if count_prog > int(num_steps):
+                print("error3")
+                break
         if view_q >= len(input_tape):
             input_tape.append("&")
         

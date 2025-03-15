@@ -1,55 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Turing</title>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
-	</head>
 
-	<body>
-		<div class="wrapper">
-			<header class="header">
-				<div class="header__container">
-					<div class="header__logo">
-						<div class="logo">Turing Machine</div>
-					</div>
-				</div>
-			</header>
-			<main class="main">
-				<div class="main__container">
-					<form onsubmit="event.preventDefault(); generate_table()">
-						<input type="text" name="input" id="size" class="input" placeholder="size" />
-						<input type="text" name="" id="T" value="1&-+" placeholder="T-alphabet" />
-						<button type="submit">Create table</button>
-					</form>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Turing Machine</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+</head>
 
-					<div id="table"></div>
+<body>
+	<div class="wrapper">
+		<main class="main">
+			<div class="main__container">
+				<div class="main__block">
+					<div class="main__control-panel">
+						<form onsubmit="event.preventDefault(); generate_table()">
+							<input type="text" name="input" id="size" class="input" placeholder="size" />
+							<input type="text" name="" id="T" value="1&-+" placeholder="T-alphabet" />
+							<button type="submit">Create table</button>
+						</form>
 
-					<form onsubmit="event.preventDefault(); from_file()">
-						<input type="file" id="file" accept=".json" onchange="from_file()" />
-					</form>
-					<!-- <input type="file" id="file" accept=".json" /> -->
-					<!-- <button onclick="from_file()">Import</button> -->
-					<input type="text" id="row_name" value="1" />
-					<div class="button__block">
-						<button type="submit" onclick="write_and_download()">Export</button>
 						<button onclick="add_row()">Add</button>
-					</div>
+						<button onclick="remove_row()">Remove</button>
 
-					<input type="text" id="input_tape" value="111+11-11" />
-					<input type="text" id="num_steps" value="10" />
-					<button type="submit" onclick="run()">Start</button>
-					
-					<div id="output"></div>
+						<form>
+							<input type="file" id="file" accept=".json" onchange="from_file()" />
+						</form>
+
+						<button type="submit" onclick="write_and_download()">Export</button>
+
+						<input type="text" id="input_tape" value="'q0'111+11-11" />
+						<input type="text" id="num_steps" placeholder="Max steps" />
+						<button type="submit" onclick="run()">Start</button>
+
+						<div class="table__container">
+							<table id="table"></table>
+						</div>
+					</div>
 				</div>
-			</main>
-		</body>
-		<footer class="footer">
-			<div class="footer__container">
-				Created by Svatenko Stepan and Vasylenko Artem
+
+				<div class="main__block">
+					<div class="output__container">
+						<h2 class="output__title">Output:</h2>
+						<div id="output"></div>
+					</div>
+				</div>
 			</div>
-		</footer>
-	</div>
-	<script src="{{url_for('static', filename='script.js')}}"></script>
+		</main>
+</body>
+</div>
+<script src="{{url_for('static', filename='script.js')}}"></script>
+
 </html>

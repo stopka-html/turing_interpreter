@@ -4,49 +4,54 @@ let is_created = false
 const size_value = document.getElementById('size')
 const T_value = document.getElementById('T')
 
-function generate_table() {
-	let table = document.getElementById('table')
-	q_rows = 0
-	table.innerHTML = ''
-	let size = size_value.value
-	let T_alphavit = T_value.value
-	tr = document.createElement('tr')
-	var td = document.createElement('td')
-	tr.appendChild(td)
-	for (var j = 0; j < T_alphavit.length; j++) {
-		var td = document.createElement('td')
-		td.innerHTML = T_alphavit[j]
-		tr.appendChild(td)
-	}
-	document.getElementById('table').appendChild(tr)
-	add_row(size, T_alphavit)
+document.onload = () => {
+	size_value = 1
+	generate_table()
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-	var data = JSON.parse(localStorage.getItem('data'))
-	if (data != null) {
-		read_from_var(data, data['size'], data['T_alphavit'])
-	}
+document.addEventListener('DOMContentLoaded', () => {
+	const data = JSON.parse(localStorage.getItem('data'))
+	if (data != null) read_from_var(data, data['size'], data['T_alphavit'])
 })
 
 // save data
 setInterval(() => {
 	if (is_created) {
-		var data = get_inputs()
-
-		data['size'] = document.getElementById('size').value
-		data['T_alphavit'] = document.getElementById('T').value
+		let data = get_inputs()
+		data['size'] = size_value.value
+		data['T_alphavit'] = T_value.value
 		localStorage.setItem('data', JSON.stringify(data))
 	}
 }, 60000) // 60 sec
 
+function generate_table() {
+	document.getElementById('table').innerHTML = ''
+	q_rows = 0
+
+	const tr = document.createElement('tr')
+	const td = document.createElement('td')
+	td.className = 'q_name'
+	td.innerHTML = 'q'
+
+	tr.appendChild(td) // q name
+	for (let i = 0; i < T_value.value.length; i++) {
+		const td = document.createElement('td')
+		td.innerHTML = T_value.value[i]
+		tr.appendChild(td) // T
+	}
+
+	document.getElementById('table').appendChild(tr)
+	add_row(size_value.value, T_value.value)
+}
+
 // add row
-function add_row(size = document.getElementById('row_name').value, T_alphavit = document.getElementById('T').value) {
+function add_row(size = 1, T_alphavit = T_value.value) {
 	for (var i = 0; i < size; i++) {
 		var tr = document.createElement('tr')
 		td = document.createElement('td')
 		td.innerHTML = 'q' + q_rows
 		tr.appendChild(td)
+
 		for (var j = 1; j < T_alphavit.length + 1; j++) {
 			var td = document.createElement('td')
 			var input_field = document.createElement('input')
@@ -63,10 +68,16 @@ function add_row(size = document.getElementById('row_name').value, T_alphavit = 
 	}
 }
 
+function remove_row() {
+	const table = document.getElementById('table')
+	table.deleteRow(table.rows.length - 1)
+}
+
 // get all inputs
 function get_inputs() {
 	var q_commands = document.getElementsByClassName('q_commands__field')
 	var data = {}
+
 	for (var i = 0; i < q_commands.length; i++) {
 		let q_command = q_commands[i].getAttribute('name')
 		if (q_commands[i].value != '') {
@@ -86,15 +97,16 @@ function run() {
 	var size = document.getElementById('size').value
 	var num_steps = document.getElementById('num_steps').value
 	var data = get_inputs()
+
 	if (Object.keys(data).length == 0) {
-		console.log('No data')
 		const div_output = document.getElementById('output')
 		const p = document.createElement('p')
 		p.innerHTML = 'No data'
 		div_output.appendChild(p)
 		return
 	}
-	let response = fetch('/run', {
+
+	fetch('/run', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -103,7 +115,6 @@ function run() {
 	})
 		.then((response) => response.json())
 		.then((data) => {
-			console.log(data)
 			data_field = document.getElementById('output')
 			for (const key in data) {
 				if (key != '') {
@@ -124,53 +135,42 @@ function run() {
 		})
 }
 
-requestpost = document.getElementById('run')
-requestpost.addEventListener('submit', run)
-
 function read_from_var(data, size, T) {
-	console.log(data)
 	delete data['size']
 	delete data['T_alphavit']
-	console.log(size)
-	console.log(T)
 	document.getElementById('size').value = size
 	document.getElementById('T').value = T
 	generate_table()
 	const input = document.getElementsByClassName('q_commands__field')
 	for (const key in data) {
-		for (const key2 in data[key]) {
-			input[key + '_' + key2].value = data[key][key2]
-		}
+		for (const key2 in data[key]) input[key + '_' + key2].value = data[key][key2]
 	}
 }
 
 // read json from file
 function from_file() {
-	var file = document.getElementById('file').files[0]
-	var reader = new FileReader()
+	const reader = new FileReader()
+	const file = document.getElementById('file').files[0]
 	const input = document.getElementsByClassName('q_commands__field')
-	reader.onload = function () {
-		var contents = reader.result
-		contents = JSON.parse(contents)
+
+	reader.onload = () => {
+		const contents = JSON.parse(reader.result)
 		for (const key in contents) {
-			for (const key2 in contents[key]) {
-				console.log(key + '_' + key2)
-				console.log(contents[key][key2])
-				input[key + '_' + key2].value = contents[key][key2]
-			}
+			for (const key2 in contents[key]) input[key + '_' + key2].value = contents[key][key2]
 		}
 	}
+
 	reader.readAsText(file)
 }
 
 //write json commands to file
 function write_and_download() {
-	const input = document.getElementsByClassName('q_commands__field')
-	var data = get_inputs()
-	var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))
-	var downloadAnchorNode = document.createElement('a')
+	// const input = document.getElementsByClassName('q_commands__field')
+	const data = get_inputs()
+	const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))
+	const downloadAnchorNode = document.createElement('a')
 	downloadAnchorNode.setAttribute('href', dataStr)
-	downloadAnchorNode.setAttribute('download', 'prog.json')
+	downloadAnchorNode.setAttribute('download', 'table_commands.json')
 	document.body.appendChild(downloadAnchorNode) // required for firefox
 	downloadAnchorNode.click()
 	downloadAnchorNode.remove()

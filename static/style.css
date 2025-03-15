@@ -66,7 +66,7 @@ body {
 }
 
 ::-webkit-scrollbar {
-	display: none;
+	/* display: none; */
 	width: clamp(5px, 1vw, 7px);
 	height: clamp(5px, 1vw, 7px);
 	background-color: rgba(255, 255, 255, 0.2);
@@ -98,20 +98,21 @@ body {
 	user-select: none;
 }
 
-table {
+/* .table {
 	border-collapse: collapse;
 	border: 2px solid rgb(140 140 140);
 	font-family: sans-serif;
 	font-size: 0.8rem;
 	letter-spacing: 1px;
-}
-td {
+} */
+
+/* td {
 	border: 1px solid rgb(160 160 160);
 	padding: 8px 10px;
-}
+} */
+
 p {
 	text-align: center;
-	color: blue;
 	font-family: sans-serif;
 	font-size: 0.8rem;
 	letter-spacing: 1px;
@@ -138,21 +139,18 @@ input {
 	transition: 0.3s ease;
 	border-radius: 10px;
 	background-color: var(--main-color);
-	&:hover {
-		color: var(--main-bg-color);
-	}
 }
 
 .q_commands {
 	min-width: 100px;
 	border: 1px solid rgb(160 160 160);
-	padding: 8px 10px;
+	/* padding: 8px 10px; */
 }
 
 [class*='__container'] {
-	max-width: 1200px;
+	/* max-width: 1200px; */
 	margin: 0 auto;
-	padding: 0 15px;
+	/* padding: 0 15px; */
 }
 
 .wrapper {
@@ -160,4 +158,78 @@ input {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+}
+
+.table__container {
+	overflow: auto;
+	width: 100%;
+	width: 100%;
+}
+
+.table__container {
+	overflow: auto;
+	width: 100%;
+	height: 50vh;
+	display: flex;
+	flex-direction: column;
+}
+
+table {
+	width: 100%;
+	height: 100%;
+	border-collapse: collapse; /* Убирает промежутки между ячейками */
+	margin: 0; /* Убирает отступы вокруг таблицы */
+	padding: 0; /* Убирает внутренние отступы таблицы */
+
+	tr {
+		display: flex;
+		width: 100%;
+		min-height: 40px;
+		justify-content: space-between;
+		align-items: center;
+		text-align: center;
+		margin: 0; /* Убирает отступы у строк */
+		padding: 0; /* Убирает внутренние отступы у строк */
+
+		&:nth-child(odd) {
+			background-color: var(--second-color);
+		}
+	}
+
+	td {
+		padding: 0; /* Убирает отступы внутри ячеек */
+		margin: 0; /* Убирает внешние отступы у ячеек */
+	}
+
+	td:first-child {
+		width: 50px;
+		flex: 0 0 50px;
+	}
+
+	td:not(:first-child) {
+		flex: 1;
+	}
+
+	input {
+		width: 100%;
+		height: 100%;
+		min-width: 100px;
+		min-height: 30px;
+		border-radius: 0;
+		border: none;
+		padding: 0;
+		margin: 0;
+		color: var(--main-bg-color);
+		transition: 0;
+		display: block;
+
+		/* display: block; */
+		/* width: 100%; */
+		height: calc(2.25rem + 2px);
+		font-size: large;
+
+		&:focus {
+			outline: 0;
+		}
+	}
 }
