@@ -92,7 +92,7 @@ function run() {
   var input = document.getElementById('input_tape').value;
   var T_alphavit = document.getElementById('T').value;  
   var size = document.getElementById('size').value;
-  
+  var num_steps = document.getElementById('num_steps').value;  
   var data = get_inputs();
   if (Object.keys(data).length == 0) {
     console.log("No data");
@@ -108,7 +108,7 @@ function run() {
       'Content-Type': 'application/json',
 
     },
-    body: JSON.stringify({input: input, size: size, T_alphavit: T_alphavit, data: data})
+    body: JSON.stringify({input: input, num_steps: num_steps, size: size, T_alphavit: T_alphavit, data: data})
   }).then(response => response.json())
   .then(data => {
     console.log(data);

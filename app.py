@@ -15,7 +15,7 @@ def hello_world():
 def run():
     data = request.json
     print(data)
-    data = turing.init_program(data["data"],data["T_alphavit"],"q0",data["input"])
+    data = turing.init_program(data["data"],data["T_alphavit"],"q0",data["input"],data["num_steps"])
     return jsonify({"data":data})
 
 

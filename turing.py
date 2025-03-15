@@ -12,10 +12,10 @@ import time
 #   "q6":{"&":"&q0R","1":"1q6R",},
 # }
 # input_tape = ["q0","1","1","1","+","1","1","-","1","1"]
-def init_program(turing,T,current_task,input_tape):
-    return run(turing,T,current_task,input_tape)
+def init_program(turing,T,current_task,input_tape,num_steps):
+    return run(turing,T,current_task,input_tape,num_steps)
 
-def run(machine_turing,T,current_task="q0",input_tape=["q0","1","1","1","+","1","1","-","1","1"]):
+def run(machine_turing,T,current_task="q0",input_tape=["q0","1","1","1","+","1","1","-","1","1"],num_steps=100):
     check_q = input_tape.split("'")
     print(check_q) 
     
@@ -32,7 +32,7 @@ def run(machine_turing,T,current_task="q0",input_tape=["q0","1","1","1","+","1",
         count_prog += 1
         index_q = input_tape.index(current_task)
         view_q = index_q+1
-        if count_prog > 500:
+        if count_prog > int(num_steps):
             print("error3")
             break
         if view_q >= len(input_tape):
