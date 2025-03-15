@@ -1,31 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Turing</title>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+	</head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Turing</title>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_index.css') }}" />
-</head>
+	<body>
+		<div class="wrapper">
+			<header class="header">
+				<div class="header__container">
+					<div class="header__logo">
+						<div class="logo">Turing Machine</div>
+					</div>
+				</div>
+			</header>
+			<main class="main">
+				<div class="main__container">
+					<form onsubmit="event.preventDefault(); generate_table()">
+						<input type="text" name="input" id="size" class="input" placeholder="size" />
+						<input type="text" name="" id="T" value="1&-+" placeholder="T-alphabet" />
+						<button type="submit">Create table</button>
+					</form>
 
-<body>
-  <p>Input:</p>
-  <input type="text" name="input" id="size" class="input" value="">
-  <input type="text" name="" id="T" value="1&-+">
-  <button onclick="generate_table()">Submit</button>
-  <button type="submit" onclick="write_and_download()">To file</button>
-  <div id="table"></div>
-  <input type="file" id="file" value="">
-  <button onclick="from_file()">From file</button>
-  <input type="text" id="row_name" value="1">
-  <button onclick="add_row()">Add</button>
-  <input type="text" id="input_tape" value="111+11-11">
-  <input type="text" id="num_steps" value="10">
-  <button type="submit" onclick="run()">Run</button>
+					<div id="table"></div>
 
-  <div id="output"></div>
+					<form onsubmit="event.preventDefault(); from_file()">
+						<input type="file" id="file" accept=".json" onchange="from_file()" />
+					</form>
+					<!-- <input type="file" id="file" accept=".json" /> -->
+					<!-- <button onclick="from_file()">Import</button> -->
+					<input type="text" id="row_name" value="1" />
+					<div class="button__block">
+						<button type="submit" onclick="write_and_download()">Export</button>
+						<button onclick="add_row()">Add</button>
+					</div>
 
-</body>
-<script src="{{url_for('static', filename='script_index.js')}}"></script>
-
+					<input type="text" id="input_tape" value="111+11-11" />
+					<input type="text" id="num_steps" value="10" />
+					<button type="submit" onclick="run()">Start</button>
+					
+					<div id="output"></div>
+				</div>
+			</main>
+		</body>
+		<footer class="footer">
+			<div class="footer__container">
+				Created by Svatenko Stepan and Vasylenko Artem
+			</div>
+		</footer>
+	</div>
+	<script src="{{url_for('static', filename='script.js')}}"></script>
 </html>

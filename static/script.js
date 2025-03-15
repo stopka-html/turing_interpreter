@@ -1,0 +1,177 @@
+let q_rows = 0
+let is_created = false
+
+const size_value = document.getElementById('size')
+const T_value = document.getElementById('T')
+
+function generate_table() {
+	let table = document.getElementById('table')
+	q_rows = 0
+	table.innerHTML = ''
+	let size = size_value.value
+	let T_alphavit = T_value.value
+	tr = document.createElement('tr')
+	var td = document.createElement('td')
+	tr.appendChild(td)
+	for (var j = 0; j < T_alphavit.length; j++) {
+		var td = document.createElement('td')
+		td.innerHTML = T_alphavit[j]
+		tr.appendChild(td)
+	}
+	document.getElementById('table').appendChild(tr)
+	add_row(size, T_alphavit)
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+	var data = JSON.parse(localStorage.getItem('data'))
+	if (data != null) {
+		read_from_var(data, data['size'], data['T_alphavit'])
+	}
+})
+
+// save data
+setInterval(() => {
+	if (is_created) {
+		var data = get_inputs()
+
+		data['size'] = document.getElementById('size').value
+		data['T_alphavit'] = document.getElementById('T').value
+		localStorage.setItem('data', JSON.stringify(data))
+	}
+}, 60000) // 60 sec
+
+// add row
+function add_row(size = document.getElementById('row_name').value, T_alphavit = document.getElementById('T').value) {
+	for (var i = 0; i < size; i++) {
+		var tr = document.createElement('tr')
+		td = document.createElement('td')
+		td.innerHTML = 'q' + q_rows
+		tr.appendChild(td)
+		for (var j = 1; j < T_alphavit.length + 1; j++) {
+			var td = document.createElement('td')
+			var input_field = document.createElement('input')
+			input_field.type = 'text'
+			input_field.name = 'q' + q_rows + '_' + T_alphavit[j - 1]
+			input_field.className = 'q_commands__field'
+			td.appendChild(input_field)
+			td.className = 'q_commands'
+			tr.appendChild(td)
+		}
+		q_rows++
+
+		document.getElementById('table').appendChild(tr)
+	}
+}
+
+// get all inputs
+function get_inputs() {
+	var q_commands = document.getElementsByClassName('q_commands__field')
+	var data = {}
+	for (var i = 0; i < q_commands.length; i++) {
+		let q_command = q_commands[i].getAttribute('name')
+		if (q_commands[i].value != '') {
+			const q_t = q_command.split('_')[1]
+			const q_n = q_command.split('_')[0]
+
+			data[q_n] = { ...data[q_n], [q_t]: q_commands[i].value }
+		}
+	}
+	return data
+}
+
+// post to flask and get program
+function run() {
+	var input = document.getElementById('input_tape').value
+	var T_alphavit = document.getElementById('T').value
+	var size = document.getElementById('size').value
+	var num_steps = document.getElementById('num_steps').value
+	var data = get_inputs()
+	if (Object.keys(data).length == 0) {
+		console.log('No data')
+		const div_output = document.getElementById('output')
+		const p = document.createElement('p')
+		p.innerHTML = 'No data'
+		div_output.appendChild(p)
+		return
+	}
+	let response = fetch('/run', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ input: input, num_steps: num_steps, size: size, T_alphavit: T_alphavit, data: data }),
+	})
+		.then((response) => response.json())
+		.then((data) => {
+			console.log(data)
+			data_field = document.getElementById('output')
+			for (const key in data) {
+				if (key != '') {
+					let tr = document.createElement('tr')
+					let td = document.createElement('td')
+					td.innerHTML = key
+					tr.appendChild(td)
+					for (const key2 in data[key]) {
+						if (data[key][key2] != '') {
+							let td = document.createElement('td')
+							td.innerHTML = data[key][key2]
+							tr.appendChild(td)
+						}
+					}
+					data_field.appendChild(tr)
+				}
+			}
+		})
+}
+
+requestpost = document.getElementById('run')
+requestpost.addEventListener('submit', run)
+
+function read_from_var(data, size, T) {
+	console.log(data)
+	delete data['size']
+	delete data['T_alphavit']
+	console.log(size)
+	console.log(T)
+	document.getElementById('size').value = size
+	document.getElementById('T').value = T
+	generate_table()
+	const input = document.getElementsByClassName('q_commands__field')
+	for (const key in data) {
+		for (const key2 in data[key]) {
+			input[key + '_' + key2].value = data[key][key2]
+		}
+	}
+}
+
+// read json from file
+function from_file() {
+	var file = document.getElementById('file').files[0]
+	var reader = new FileReader()
+	const input = document.getElementsByClassName('q_commands__field')
+	reader.onload = function () {
+		var contents = reader.result
+		contents = JSON.parse(contents)
+		for (const key in contents) {
+			for (const key2 in contents[key]) {
+				console.log(key + '_' + key2)
+				console.log(contents[key][key2])
+				input[key + '_' + key2].value = contents[key][key2]
+			}
+		}
+	}
+	reader.readAsText(file)
+}
+
+//write json commands to file
+function write_and_download() {
+	const input = document.getElementsByClassName('q_commands__field')
+	var data = get_inputs()
+	var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))
+	var downloadAnchorNode = document.createElement('a')
+	downloadAnchorNode.setAttribute('href', dataStr)
+	downloadAnchorNode.setAttribute('download', 'prog.json')
+	document.body.appendChild(downloadAnchorNode) // required for firefox
+	downloadAnchorNode.click()
+	downloadAnchorNode.remove()
+}
