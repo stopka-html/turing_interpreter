@@ -111,3 +111,25 @@ function from_file() {
   }
   reader.readAsText(file);
 }
+function write_and_download(){
+  const input = document.getElementsByClassName('q_commands__field');
+  let data = {
+    
+  }
+  for (var i = 0; i < input.length; i++) {
+    let q_command = input[i].getAttribute('name');
+    if (input[i].value != "") {
+      const q_t = q_command.split("_")[1];
+      const q_n = q_command.split("_")[0];
+      
+      data[q_n] = { ...data[q_n], [q_t] : input[i].value}
+    }
+  }
+  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+  var downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href",     dataStr     );
+  downloadAnchorNode.setAttribute("download", "prog.json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
