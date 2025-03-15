@@ -16,11 +16,25 @@ def init_program(turing,T,current_task,input_tape):
     return run(turing,T,current_task,input_tape)
 
 def run(machine_turing,T,current_task="q0",input_tape=["q0","1","1","1","+","1","1","-","1","1"]):
-    input_tape = list(input_tape)
-    input_tape.insert(0,"q0")
+    check_q = input_tape.split("'")
+    print(check_q) 
+    
+    for i in check_q:
+        if i in machine_turing:
+            if i in check_q[1]:
+                input_tape = list(check_q[0]+check_q[2])
+                current_task = i
+                input_tape.insert(len(check_q[0]),current_task)
+
+    print(input_tape)
+    count_prog = 0
     while current_task != "q*":
+        count_prog += 1
         index_q = input_tape.index(current_task)
         view_q = index_q+1
+        if count_prog > 500:
+            print("error3")
+            break
         if view_q >= len(input_tape):
             input_tape.append("&")
         
