@@ -63,8 +63,8 @@ def run(machine_turing,T,current_task="q0",input_tape=["q0","1","1","1","+","1",
                             
                     case "N":
                         input_tape[index_q] = current_task
-
-                print(" ".join(input_tape),index_q)
+                form_output = '%5s %10s' % ((" ".join(input_tape)), ("("+machine_turing[old_task][old_view]+")"))
+                print((str(count_prog)+"."),form_output)
                 
             else:
                 print(input_tape)
