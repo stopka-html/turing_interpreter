@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 :root {
 	--main-bg-color: #121212;
 	--main-color: #e0e0e0;
@@ -57,7 +59,6 @@ body {
 	font-style: normal;
 
 	scroll-behavior: smooth;
-	/* overflow: hidden; */
 }
 
 ::selection {
@@ -66,7 +67,6 @@ body {
 }
 
 ::-webkit-scrollbar {
-	/* display: none; */
 	width: clamp(5px, 1vw, 7px);
 	height: clamp(5px, 1vw, 7px);
 	background-color: rgba(255, 255, 255, 0.2);
@@ -98,19 +98,6 @@ body {
 	user-select: none;
 }
 
-/* .table {
-	border-collapse: collapse;
-	border: 2px solid rgb(140 140 140);
-	font-family: sans-serif;
-	font-size: 0.8rem;
-	letter-spacing: 1px;
-} */
-
-/* td {
-	border: 1px solid rgb(160 160 160);
-	padding: 8px 10px;
-} */
-
 p {
 	text-align: center;
 	font-family: sans-serif;
@@ -118,17 +105,20 @@ p {
 	letter-spacing: 1px;
 }
 
-button {
+button,
+.import-file {
 	min-width: 100px;
 	border: 1px solid rgb(160 160 160);
 	padding: 8px 10px;
 	color: var(--main-bg-color);
-	transition: 0.3s ease;
 	border-radius: 10px;
 	background-color: var(--main-color);
-	&:hover {
-		color: var(--main-bg-color);
-	}
+
+	display: inline-block;
+	text-align: center;
+	cursor: pointer;
+	font-family: 'Kanit', sans-serif;
+	font-size: small;
 }
 
 input {
@@ -144,13 +134,10 @@ input {
 .q_commands {
 	min-width: 100px;
 	border: 1px solid rgb(160 160 160);
-	/* padding: 8px 10px; */
 }
 
 [class*='__container'] {
-	/* max-width: 1200px; */
 	margin: 0 auto;
-	/* padding: 0 15px; */
 }
 
 .wrapper {
@@ -177,9 +164,9 @@ input {
 table {
 	width: 100%;
 	height: 100%;
-	border-collapse: collapse; /* Убирает промежутки между ячейками */
-	margin: 0; /* Убирает отступы вокруг таблицы */
-	padding: 0; /* Убирает внутренние отступы таблицы */
+	border-collapse: collapse;
+	margin: 0;
+	padding: 0;
 
 	tr {
 		display: flex;
@@ -188,8 +175,8 @@ table {
 		justify-content: space-between;
 		align-items: center;
 		text-align: center;
-		margin: 0; /* Убирает отступы у строк */
-		padding: 0; /* Убирает внутренние отступы у строк */
+		margin: 0;
+		padding: 0;
 
 		&:nth-child(odd) {
 			background-color: var(--second-color);
@@ -197,8 +184,8 @@ table {
 	}
 
 	td {
-		padding: 0; /* Убирает отступы внутри ячеек */
-		margin: 0; /* Убирает внешние отступы у ячеек */
+		padding: 0;
+		margin: 0;
 	}
 
 	td:first-child {
@@ -219,12 +206,13 @@ table {
 		border: none;
 		padding: 0;
 		margin: 0;
-		color: var(--main-bg-color);
+		color: var(--main-color);
+		background-color: inherit;
 		transition: 0;
 		display: block;
 
-		/* display: block; */
-		/* width: 100%; */
+		text-align: center;
+
 		height: calc(2.25rem + 2px);
 		font-size: large;
 

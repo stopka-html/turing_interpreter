@@ -1,17 +1,3 @@
-import time
-
-# current_task = "q0"
-# T = ["-","&","+","1"]
-# machine_turing = {
-#   "q0":{"+":"+q4L","&":"&q4L","1":"1q0R",},
-#   "q1":{"&":"1q2L","1":"1q1L",},
-# "q2":{"&":"1q6R"},
-#   "q3":{"+":"","&":"","-":"","1":"",},
-#   "q4":{"&":"&q*N","1":"&q5L",},
-#   "q5":{"&":"&q1L","1":"1q5L",},
-#   "q6":{"&":"&q0R","1":"1q6R",},
-# }
-# input_tape = ["q0","1","1","1","+","1","1","-","1","1"]
 def init_program(turing,T,current_task,input_tape,num_steps):
     return run(turing,T,current_task,input_tape,num_steps)
 

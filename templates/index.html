@@ -23,11 +23,11 @@
 						<button onclick="add_row()">Add</button>
 						<button onclick="remove_row()">Remove</button>
 
-						<form>
-							<input type="file" id="file" accept=".json" onchange="from_file()" />
-						</form>
-
+						<label for="file" class="import-file">Import</label>
 						<button type="submit" onclick="write_and_download()">Export</button>
+						<input type="file" id="file" accept=".json" onchange="importFromFile()"
+							style="display: none;" />
+
 
 						<input type="text" id="input_tape" value="'q0'111+11-11" />
 						<input type="text" id="num_steps" placeholder="Max steps" />

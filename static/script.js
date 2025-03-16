@@ -3,11 +3,11 @@ let is_created = false
 
 const size_value = document.getElementById('size')
 const T_value = document.getElementById('T')
+const table = document.getElementById('table')
 
-document.onload = () => {
-	size_value = 1
-	generate_table()
-}
+size_value.value = 50
+
+generate_table()
 
 document.addEventListener('DOMContentLoaded', () => {
 	const data = JSON.parse(localStorage.getItem('data'))
@@ -25,60 +25,70 @@ setInterval(() => {
 }, 60000) // 60 sec
 
 function generate_table() {
-	document.getElementById('table').innerHTML = ''
+	table.innerHTML = ''
 	q_rows = 0
+
+	const fragment = document.createDocumentFragment()
 
 	const tr = document.createElement('tr')
 	const td = document.createElement('td')
-	td.className = 'q_name'
-	td.innerHTML = 'q'
 
 	tr.appendChild(td) // q name
+
 	for (let i = 0; i < T_value.value.length; i++) {
 		const td = document.createElement('td')
 		td.innerHTML = T_value.value[i]
 		tr.appendChild(td) // T
 	}
 
-	document.getElementById('table').appendChild(tr)
-	add_row(size_value.value, T_value.value)
+	fragment.appendChild(tr)
+
+	table.appendChild(fragment)
+	add_row(size_value.value, T_value.value, fragment)
 }
 
-// add row
 function add_row(size = 1, T_alphavit = T_value.value) {
-	for (var i = 0; i < size; i++) {
-		var tr = document.createElement('tr')
-		td = document.createElement('td')
+	const fragment = document.createDocumentFragment()
+
+	for (let i = 0; i < size; i++) {
+		const tr = document.createElement('tr')
+		const td = document.createElement('td')
 		td.innerHTML = 'q' + q_rows
 		tr.appendChild(td)
 
-		for (var j = 1; j < T_alphavit.length + 1; j++) {
-			var td = document.createElement('td')
-			var input_field = document.createElement('input')
+		for (let j = 1; j < T_alphavit.length + 1; j++) {
+			const td = document.createElement('td')
+			td.className = 'q_commands'
+
+			const input_field = document.createElement('input')
 			input_field.type = 'text'
 			input_field.name = 'q' + q_rows + '_' + T_alphavit[j - 1]
 			input_field.className = 'q_commands__field'
+
 			td.appendChild(input_field)
-			td.className = 'q_commands'
+			input_field.focus()
+
 			tr.appendChild(td)
 		}
+
 		q_rows++
 
-		document.getElementById('table').appendChild(tr)
+		fragment.appendChild(tr)
 	}
+
+	table.appendChild(fragment)
 }
 
-function remove_row() {
-	const table = document.getElementById('table')
-	table.deleteRow(table.rows.length - 1)
-}
+const q_commands = document.getElementsByClassName('q_commands')
+
+const remove_row = () => table.deleteRow(table.rows.length - 1)
 
 // get all inputs
 function get_inputs() {
-	var q_commands = document.getElementsByClassName('q_commands__field')
-	var data = {}
+	const q_commands = document.getElementsByClassName('q_commands__field')
+	let data = {}
 
-	for (var i = 0; i < q_commands.length; i++) {
+	for (let i = 0; i < q_commands.length; i++) {
 		let q_command = q_commands[i].getAttribute('name')
 		if (q_commands[i].value != '') {
 			const q_t = q_command.split('_')[1]
@@ -92,11 +102,9 @@ function get_inputs() {
 
 // post to flask and get program
 function run() {
-	var input = document.getElementById('input_tape').value
-	var T_alphavit = document.getElementById('T').value
-	var size = document.getElementById('size').value
-	var num_steps = document.getElementById('num_steps').value
-	var data = get_inputs()
+	const input = document.getElementById('input_tape').value
+	const num_steps = document.getElementById('num_steps').value
+	const data = get_inputs()
 
 	if (Object.keys(data).length == 0) {
 		const div_output = document.getElementById('output')
@@ -111,24 +119,23 @@ function run() {
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ input: input, num_steps: num_steps, size: size, T_alphavit: T_alphavit, data: data }),
+		body: JSON.stringify({ input: input, num_steps: num_steps, size: size_value.value, T_alphavit: T_value.value, data: data }),
 	})
 		.then((response) => response.json())
 		.then((data) => {
 			data_field = document.getElementById('output')
+			data_field.innerHTML = ''
 			for (const key in data) {
 				if (key != '') {
-					let tr = document.createElement('tr')
-					let td = document.createElement('td')
-					td.innerHTML = key
-					tr.appendChild(td)
-					for (const key2 in data[key]) {
+					const tr = document.createElement('tr')
+					let clear = false
+					for (const key2 in data[key])
 						if (data[key][key2] != '') {
-							let td = document.createElement('td')
-							td.innerHTML = data[key][key2]
-							tr.appendChild(td)
+							let span = document.createElement('span')
+							span.innerHTML = data[key][key2]
+							tr.appendChild(span)
 						}
-					}
+
 					data_field.appendChild(tr)
 				}
 			}
@@ -138,34 +145,34 @@ function run() {
 function read_from_var(data, size, T) {
 	delete data['size']
 	delete data['T_alphavit']
-	document.getElementById('size').value = size
-	document.getElementById('T').value = T
+	size_value.value = size
+	T_value.value = T
 	generate_table()
 	const input = document.getElementsByClassName('q_commands__field')
-	for (const key in data) {
-		for (const key2 in data[key]) input[key + '_' + key2].value = data[key][key2]
-	}
+	for (const key in data) for (const key2 in data[key]) input[key + '_' + key2].value = data[key][key2]
 }
 
 // read json from file
-function from_file() {
+function importFromFile() {
 	const reader = new FileReader()
-	const file = document.getElementById('file').files[0]
 	const input = document.getElementsByClassName('q_commands__field')
+
+	const fileInput = document.getElementById('file')
+	const files = fileInput.files
+	const lastFile = files[files.length - 1]
+
+	generate_table()
 
 	reader.onload = () => {
 		const contents = JSON.parse(reader.result)
-		for (const key in contents) {
-			for (const key2 in contents[key]) input[key + '_' + key2].value = contents[key][key2]
-		}
+		for (const key in contents) for (const key2 in contents[key]) input[key + '_' + key2].value = contents[key][key2]
 	}
 
-	reader.readAsText(file)
+	reader.readAsText(lastFile)
 }
 
 //write json commands to file
 function write_and_download() {
-	// const input = document.getElementsByClassName('q_commands__field')
 	const data = get_inputs()
 	const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))
 	const downloadAnchorNode = document.createElement('a')
