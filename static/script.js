@@ -4,6 +4,7 @@ let is_created = false
 const size_value = document.getElementById('size')
 const T_value = document.getElementById('T')
 const table = document.getElementById('table')
+const q_commands__label = document.getElementsByClassName('q_commands__label')
 
 size_value.value = 50
 
@@ -37,8 +38,13 @@ function generate_table() {
 
 	for (let i = 0; i < T_value.value.length; i++) {
 		const td = document.createElement('td')
-		td.innerHTML = T_value.value[i]
-		tr.appendChild(td) // T
+		const input = document.createElement('input')
+
+		input.className = 'q_commands__label'
+		input.value = T_value.value[i]
+
+		td.appendChild(input)
+		tr.appendChild(td)
 	}
 
 	fragment.appendChild(tr)
@@ -119,7 +125,7 @@ function run() {
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ input: input, num_steps: num_steps, size: size_value.value, T_alphavit: T_value.value, data: data }),
+		body: JSON.stringify({ input: input, num_steps: num_steps, size: size_value.value, T_alphavit: q_commands__label, data: data }),
 	})
 		.then((response) => response.json())
 		.then((data) => {
@@ -128,7 +134,6 @@ function run() {
 			for (const key in data) {
 				if (key != '') {
 					const tr = document.createElement('tr')
-					let clear = false
 					for (const key2 in data[key])
 						if (data[key][key2] != '') {
 							let span = document.createElement('span')
