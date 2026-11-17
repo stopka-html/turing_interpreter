@@ -4,8 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2B2D42">
   <title>Тюрінговий калькулятор</title>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_index.css') }}" />
+  <link rel="manifest" href="static/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="static/icons/icon.svg">
+  <link rel="apple-touch-icon" href="static/icons/apple-touch-icon.png">
+  <link rel="stylesheet" type="text/css" href="static/style_index.css" />
 </head>
 
 <body>
@@ -16,6 +20,7 @@
         <span></span><span></span><span></span>
       </button>
       <h1>Тюрінговий <span>калькулятор</span></h1>
+      <span id="offline" class="badge" hidden title="Немає з’єднання — програма працює з кешу, обчислення виконуються в браузері">Офлайн</span>
     </div>
     <p>Детермінована однострічкова машина Тюрінга: задайте таблицю переходів, вхідне слово — і дивіться, як працює головка.</p>
   </header>
@@ -55,9 +60,15 @@
         <ul>
           <li>«Запустити» — виконати програму; кожен такт показується на стрічці, а виконана команда підсвічується жовтим у таблиці.</li>
           <li>«Пауза», «Зупинити», «До кінця» та повзунок швидкості керують показом тактів.</li>
-          <li>Ліміт тактів (до 10000) захищає від зациклення: після нього виконання зупиняється.</li>
+          <li>Ліміт тактів (до 100000) захищає від зациклення: після нього виконання зупиняється.</li>
           <li>«Зберегти журнал» записує протокол переходів у текстовий файл, «Зберегти у файл» / «Відкрити файл» — таблицю у форматі JSON (prog.json).</li>
           <li>Таблиця автоматично зберігається в браузері й відновлюється при наступному відкритті сторінки.</li>
+        </ul>
+        <h3>Робота без інтернету</h3>
+        <ul>
+          <li>Програми виконуються прямо в браузері, тому після першого відкриття сторінка працює й офлайн — тоді в заголовку з’являється позначка «Офлайн».</li>
+          <li>Застосунок можна встановити: у Chrome / Edge — кнопкою «Встановити» в адресному рядку, на телефоні — «Додати на головний екран».</li>
+          <li>Довгі запуски (ліміт понад 10000 тактів) обчислює сервер; якщо він недоступний, програма виконається в браузері.</li>
         </ul>
       </section>
     </div>
@@ -84,7 +95,7 @@
         <h2>Виконання</h2>
         <div class="row">
           <label>Вхідне слово <input type="text" id="input_tape" value="111+11"></label>
-          <label>Ліміт тактів <input type="number" id="num_steps" value="1000" min="1" max="10000"></label>
+          <label>Ліміт тактів <input type="number" id="num_steps" value="1000" min="1" max="100000"></label>
           <button id="run_button" class="primary" onclick="run()">Запустити</button>
         </div>
         <p class="hint">Положення головки можна задати позначкою стану: <code>11'q0'+11</code>. Без позначки машина стартує в q0 з першого символу.</p>
@@ -108,7 +119,8 @@
     </div>
   </main>
 
-  <script src="{{ url_for('static', filename='script_index.js') }}"></script>
+  <script src="static/turing.js"></script>
+  <script src="static/script_index.js"></script>
 </body>
 
 </html>

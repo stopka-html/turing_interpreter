@@ -1,18 +1,29 @@
 import json
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_from_directory
 
 import turing
 
 app = Flask(__name__)
 EXAMPLES = Path(__file__).with_name("examples")
-MAX_STEPS = 10000  # upper bound for the user's step limit
+# Upper bound for the step limit.  The browser runs programs itself (static/
+# turing.js) and sends only runs longer than 10000 steps here.
+MAX_STEPS = 100000
 
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.get("/sw.js")
+def service_worker():
+    """The service worker must be served from the root to control the whole
+    site (offline mode); no-cache so that browsers pick up its updates."""
+    response = send_from_directory(app.static_folder, "sw.js", max_age=0)
+    response.headers["Cache-Control"] = "no-cache"
+    return response
 
 
 @app.get("/examples")

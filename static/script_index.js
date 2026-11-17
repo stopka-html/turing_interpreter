@@ -10,6 +10,15 @@ const STATUS_TEXT = {
   STEP_LIMIT: 'Перевищено ліміт тактів — можливе зациклення.',
   INTERRUPTED: 'Виконання перервано користувачем.',
 };
+// Programs run in the browser (static/turing.js), so the page works offline.
+// Longer runs go to the server (turing.py) when it is reachable.
+const LOCAL_MAX_STEPS = 10000;
+const MAX_STEPS = 100000; // the same bound as in app.py
+const ENGINE_TEXT = {
+  local: '(Обчислено в браузері.)',
+  server: '(Обчислено на сервері.)',
+  fallback: '(Сервер недоступний — обчислено в браузері.)',
+};
 
 let q_rows = 0;
 let examples = [];
@@ -248,7 +257,7 @@ function tape_svg(input, result) {
 
 async function load_examples() {
   try {
-    const response = await fetch('/examples');
+    const response = await fetch('examples');
     examples = await response.json();
   } catch (e) {
     return;
@@ -399,7 +408,8 @@ function done(status) {
   player.status = status;
   const step = player.result.log[player.index].step;
   let text = STATUS_TEXT[status] + ' Тактів: ' + step + '.';
-  if (status === 'FINISHED') text += ' Результат: ' + (player.result.tape || '(порожня стрічка)');
+  if (status === 'FINISHED') text += ' Результат: ' + (player.result.tape || '(порожня стрічка)') + '.';
+  text += ' ' + ENGINE_TEXT[player.engine];
   show_status(text, status !== 'FINISHED');
   if (status === 'NO_RULE' || status === 'NO_STATE') {
     highlight_cell('missing', scanned(player.result.log[player.index].tape));
@@ -418,26 +428,46 @@ async function run() {
   const data = get_inputs();
   if (Object.keys(data).length === 0) return show_status('Таблиця переходів порожня.', true);
   save();
-  let response, result;
-  try {
-    response = await fetch('/run', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        input: $('input_tape').value, num_steps: $('num_steps').value,
-        size: q_rows, T_alphavit: $('T').value, data,
-      }),
-    });
-    result = await response.json();
-  } catch (e) {
-    return show_status('Сервер недоступний.', true);
-  }
-  if (!response.ok) return show_status('Помилка: ' + result.error, true);
-  player = { result, index: 0, timer: null, paused: false };
+  $('run_button').disabled = true;
+  const outcome = await compute({
+    input: $('input_tape').value, num_steps: Number($('num_steps').value),
+    T_alphavit: $('T').value, data,
+  });
+  $('run_button').disabled = false;
+  if (outcome.error) return show_status('Помилка: ' + outcome.error, true);
+  const result = outcome.result;
+  player = { result, engine: outcome.engine, index: 0, timer: null, paused: false };
   $('log_button').disabled = false;
   set_running(true);
   show_step(0);
   player.timer = setTimeout(tick, 1000 - $('speed').value);
+}
+
+// Run the program on the server or locally; returns {result, engine} or {error}.
+async function compute(request) {
+  const steps = request.num_steps;
+  if (!Number.isInteger(steps) || steps < 1 || steps > MAX_STEPS) {
+    return { error: 'ліміт тактів має бути цілим числом від 1 до ' + MAX_STEPS };
+  }
+  let engine = 'local';
+  if (steps > LOCAL_MAX_STEPS) {
+    try {
+      const response = await fetch('run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+      });
+      const body = await response.json();
+      return response.ok ? { result: body, engine: 'server' } : { error: body.error };
+    } catch (e) {
+      engine = 'fallback'; // offline or no server: compute here, it just takes longer
+    }
+  }
+  try {
+    return { result: Turing.run(request.data, request.T_alphavit, request.input, steps), engine };
+  } catch (e) {
+    return { error: e instanceof Turing.ProgramError ? e.message : 'внутрішня помилка: ' + e.message };
+  }
 }
 
 function toggle_pause() {
@@ -457,6 +487,19 @@ function finish() {
 }
 
 // ---------------------------------------------------------------- init ---
+function show_network_state() {
+  $('offline').hidden = navigator.onLine;
+}
+window.addEventListener('online', show_network_state);
+window.addEventListener('offline', show_network_state);
+
+// Offline mode: the service worker caches the app (see static/sw.js).
+// All URLs are relative, so the app also works from a subfolder (GitHub Pages).
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch((e) => console.warn('service worker:', e));
+  });
+}
 window.addEventListener('hashchange', show_view);
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && $('menu').classList.contains('open')) {
@@ -467,6 +510,7 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('DOMContentLoaded', () => {
   show_view();
+  show_network_state();
   load_examples();
   for (const id of ['input_tape', 'num_steps']) $(id).addEventListener('change', save);
   if (!restore()) generate_table();

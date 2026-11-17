@@ -41,6 +41,18 @@ h1 span {
   color: var(--cyan);
   border-bottom: 4px solid var(--pink);
 }
+.badge {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--pink);
+  color: var(--navy);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.badge[hidden] {
+  display: none;
+}
 header p {
   margin: 12px 0 0;
   color: var(--cyan);
