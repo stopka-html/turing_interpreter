@@ -1,0 +1,546 @@
+:root {
+  --navy: #2B2D42;
+  --cyan: #92DCE5;
+  --paper: #F8F7F9;
+  --yellow: #F7EC59;
+  --pink: #FF66D8;
+  --navy-soft: rgb(43 45 66 / 0.12);
+  --radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--navy);
+  color: var(--navy);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  line-height: 1.4;
+}
+
+/* ---------------------------------------------------------------- header */
+header {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 32px 16px 20px;
+  color: var(--paper);
+}
+header .bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  letter-spacing: 0.5px;
+}
+h1 span {
+  color: var(--cyan);
+  border-bottom: 4px solid var(--pink);
+}
+.badge {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--pink);
+  color: var(--navy);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.badge[hidden] {
+  display: none;
+}
+header p {
+  margin: 12px 0 0;
+  color: var(--cyan);
+}
+
+/* ------------------------------------------------------ hamburger menu */
+button.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  flex-shrink: 0;
+  background: transparent;
+  border: 2px solid var(--cyan);
+  border-radius: 8px;
+  position: relative;
+  z-index: 30;
+}
+button.hamburger span {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--cyan);
+  transition: transform 0.2s, opacity 0.2s;
+}
+button.hamburger:hover:not(:disabled) {
+  background: var(--pink);
+  border-color: var(--pink);
+}
+button.hamburger:hover span {
+  background: var(--navy);
+}
+button.hamburger[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+button.hamburger[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+button.hamburger[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 20;
+  width: min(280px, 80vw);
+  padding: 90px 0 24px;
+  background: var(--navy);
+  border-right: 4px solid var(--pink);
+  box-shadow: 8px 0 24px rgb(0 0 0 / 0.35);
+  transform: translateX(-105%);
+  visibility: hidden;
+  transition: transform 0.25s ease, visibility 0.25s;
+}
+.drawer.open {
+  transform: none;
+  visibility: visible;
+}
+.drawer_title {
+  margin: 0 24px 10px;
+  color: var(--cyan);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.drawer a {
+  display: block;
+  padding: 12px 24px;
+  color: var(--paper);
+  font-weight: 600;
+  text-decoration: none;
+  border-left: 5px solid transparent;
+}
+.drawer a:hover,
+.drawer a:focus-visible {
+  background: rgb(146 220 229 / 0.15);
+  outline: none;
+}
+.drawer a.active {
+  border-left-color: var(--yellow);
+  color: var(--yellow);
+}
+.menu_overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: rgb(43 45 66 / 0.6);
+}
+.view {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+}
+.view[hidden] {
+  display: none;
+}
+.help h3 {
+  margin: 18px 0 6px;
+  font-size: 1rem;
+}
+.help p,
+.help li {
+  max-width: 75ch;
+}
+.help li {
+  margin: 4px 0;
+}
+
+/* ----------------------------------------------------------------- cards */
+main {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+}
+.card {
+  background: var(--paper);
+  border-radius: var(--radius);
+  border-top: 6px solid var(--cyan);
+  padding: 18px 22px 20px;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.25);
+}
+.card.accent_cyan {
+  border-top-color: var(--cyan);
+}
+.card.accent_pink {
+  border-top-color: var(--pink);
+}
+.card.accent_yellow {
+  border-top-color: var(--yellow);
+}
+
+/* ------------------------------------------------------- examples menu */
+.example_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+button.example_card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  text-align: left;
+  font-weight: 400;
+  color: var(--navy);
+  background: #fff;
+  border: 2px solid var(--navy-soft);
+  border-radius: var(--radius);
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+button.example_card:hover:not(:disabled) {
+  background: #fff;
+  color: var(--navy);
+  border-color: var(--cyan);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgb(43 45 66 / 0.15);
+}
+button.example_card.selected {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 3px rgb(255 102 216 / 0.25);
+}
+.example_card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+.example_card .mini {
+  width: 100%;
+  height: auto;
+  background: var(--navy);
+  border-radius: 6px;
+}
+.example_card .description {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.example_card .explanation {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgb(43 45 66 / 0.75);
+}
+.mini rect.in {
+  fill: var(--paper);
+  stroke: var(--cyan);
+}
+.mini rect.out {
+  fill: var(--yellow);
+  stroke: var(--navy);
+}
+.mini text {
+  font-family: monospace;
+  font-size: 11px;
+  fill: var(--navy);
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.mini text.label {
+  fill: var(--cyan);
+  font-family: inherit;
+  font-size: 9px;
+  text-anchor: start;
+}
+.mini .arrow {
+  stroke: var(--pink);
+  stroke-width: 2;
+  fill: none;
+}
+.mini .head {
+  fill: var(--pink);
+}
+h2 {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  margin: 10px 0;
+}
+.row.spread {
+  justify-content: space-between;
+  margin-top: 0;
+}
+.hint {
+  margin: 6px 0;
+  font-size: 0.85rem;
+  color: rgb(43 45 66 / 0.75);
+}
+code {
+  background: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+/* --------------------------------------------------------------- controls */
+label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+input[type="text"],
+input[type="number"],
+select {
+  font: inherit;
+  font-weight: 400;
+  color: var(--navy);
+  background: #fff;
+  border: 2px solid var(--navy-soft);
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+input[type="number"] {
+  width: 90px;
+}
+input:focus,
+select:focus,
+button:focus-visible {
+  outline: 3px solid var(--pink);
+  outline-offset: 1px;
+  border-color: var(--navy);
+}
+input[type="range"] {
+  accent-color: var(--pink);
+}
+button,
+.file_button {
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--paper);
+  background: var(--navy);
+  border: 2px solid var(--navy);
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+button:hover:not(:disabled),
+.file_button:hover {
+  background: var(--cyan);
+  color: var(--navy);
+}
+button.primary {
+  background: var(--pink);
+  border-color: var(--pink);
+  color: var(--navy);
+}
+button.primary:hover:not(:disabled) {
+  background: var(--yellow);
+  border-color: var(--yellow);
+}
+button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.file_button input {
+  display: none;
+}
+
+/* --------------------------------------------------- transition table */
+.table_wrap {
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 16px auto;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 2px solid var(--navy);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.9rem;
+}
+th,
+td {
+  border-right: 1px solid var(--navy-soft);
+  border-bottom: 1px solid var(--navy-soft);
+  padding: 5px 6px;
+  background: #fff;
+}
+th {
+  background: var(--cyan);
+  font-family: monospace;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+tr:first-child th {
+  background: var(--navy);
+  color: var(--paper);
+}
+th.state {
+  text-align: left;
+}
+th.add_column {
+  background: var(--navy);
+}
+#new_symbol {
+  width: 34px;
+  padding: 3px;
+  text-align: center;
+  font-family: monospace;
+}
+button.icon {
+  padding: 0 6px;
+  margin-left: 6px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
+  border-radius: 4px;
+}
+button.icon:hover:not(:disabled) {
+  background: var(--pink);
+  border-color: var(--pink);
+  color: var(--navy);
+}
+th.add_column button.icon {
+  margin-left: 4px;
+  color: var(--cyan);
+}
+button.add_row {
+  width: 100%;
+  background: transparent;
+  color: var(--navy);
+  border: 2px dashed var(--navy-soft);
+}
+button.add_row:hover:not(:disabled) {
+  border-color: var(--cyan);
+}
+tr:last-child td {
+  border-bottom: none;
+}
+.q_commands__field {
+  width: 78px;
+  font-family: monospace;
+}
+td {
+  transition: background 0.2s;
+}
+td.active {
+  background: var(--yellow);
+}
+td.active .q_commands__field {
+  background: var(--yellow);
+  border-color: var(--navy);
+  font-weight: 700;
+}
+td.missing {
+  background: var(--pink);
+}
+td.missing .q_commands__field {
+  border-color: var(--navy);
+}
+.q_commands__field.invalid {
+  outline: 2px solid var(--pink);
+}
+
+/* ---------------------------------------------------------------- tape */
+.tape {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin: 30px 0 6px;
+  font-family: monospace;
+  font-size: 1.2rem;
+}
+.tape:empty {
+  margin: 0;
+}
+.cell {
+  position: relative;
+  min-width: 34px;
+  padding: 8px 0;
+  text-align: center;
+  background: #fff;
+  border: 2px solid var(--cyan);
+  border-radius: 6px;
+}
+.cell.head {
+  background: var(--yellow);
+  border-color: var(--navy);
+  font-weight: 700;
+}
+.cell.head::after {
+  content: attr(data-state);
+  position: absolute;
+  top: -1.55em;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 5px;
+  border-radius: 4px;
+  background: var(--pink);
+  color: var(--navy);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+#status {
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 5px solid transparent;
+}
+#status:empty {
+  display: none;
+}
+#status.ok {
+  background: rgb(146 220 229 / 0.35);
+  border-left-color: var(--cyan);
+}
+#status.error {
+  background: rgb(255 102 216 / 0.18);
+  border-left-color: var(--pink);
+}
+
+/* ------------------------------------------------------------- protocol */
+#output {
+  margin: 8px 0 0;
+  padding: 10px 10px 10px 52px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--navy);
+  color: var(--cyan);
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+#output:empty {
+  display: none;
+}
+#output li::marker {
+  color: rgb(248 247 249 / 0.45);
+}
+#output li.current {
+  color: var(--yellow);
+}
